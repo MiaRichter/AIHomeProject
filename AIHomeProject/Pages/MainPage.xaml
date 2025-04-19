@@ -1,0 +1,91 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:AIHomeProject.ViewModels"
+             xmlns:model="clr-namespace:AIHomeProject.Models"
+             xmlns:converters="clr-namespace:AIHomeProject.Converters"
+             x:Class="AIHomeProject.MainPage"
+             Title="Управление компонентами"
+             x:DataType="viewmodels:MainViewModel">
+
+    <ContentPage.Resources>
+        <converters:CountToVisibilityConverter x:Key="CountToVisibilityConverter"/>
+        <converters:BoolToColorConverter x:Key="BoolToColorConverter"/>
+
+        <Style TargetType="Frame" x:Key="ComponentCard">
+            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}"/>
+            <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray700}}"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="15"/>
+            <Setter Property="WidthRequest" Value="300"/>
+            <Setter Property="HeightRequest" Value="150"/>
+            <Setter Property="Margin" Value="10"/>
+        </Style>
+
+        <Style TargetType="Label" x:Key="SubHeadline">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontAttributes" Value="Bold"/>
+            <Setter Property="HorizontalOptions" Value="Center"/>
+        </Style>
+
+        <Style TargetType="ImageButton" x:Key="IconButton">
+            <Setter Property="WidthRequest" Value="30"/>
+            <Setter Property="HeightRequest" Value="30"/>
+            <Setter Property="BackgroundColor" Value="Transparent"/>
+        </Style>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <StackLayout Padding="20" Spacing="15">
+            <Button Text="Добавить компонент" 
+                    Command="{Binding AddComponentCommand}"
+                    HorizontalOptions="Center"
+                    WidthRequest="200"/>
+
+            <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}"/>
+
+            <FlexLayout BindableLayout.ItemsSource="{Binding Components}"
+                      Wrap="Wrap"
+                      JustifyContent="Start"
+                      AlignItems="Start">
+
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="model:Component">
+                        <Frame Style="{StaticResource ComponentCard}">
+                            <VerticalStackLayout Spacing="10">
+                                <Label Text="{Binding Name}" 
+                                       Style="{StaticResource SubHeadline}"/>
+
+                                <BoxView HeightRequest="1" 
+                                         Color="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray700}}"/>
+
+                                <Label Text="{Binding ComponentType}"
+                                       FontSize="14"/>
+
+                                <Label Text="{Binding Location}"
+                                       FontSize="14"/>
+
+                                <HorizontalStackLayout Spacing="10" 
+                                                     HorizontalOptions="Center">
+                                    <ImageButton Source="info.png"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:MainViewModel}}, Path=ShowDetailsCommand}"
+                                                CommandParameter="{Binding .}"/>
+                                    <ImageButton Source="edit.png"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:MainViewModel}}, Path=EditComponentCommand}"
+                                                CommandParameter="{Binding .}"/>
+                                    <ImageButton Source="delete.png"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:MainViewModel}}, Path=DeleteComponentCommand}"
+                                                CommandParameter="{Binding ComponentId}"/>
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </FlexLayout>
+
+            <Label Text="Нет доступных компонентов"
+                  IsVisible="{Binding Components.Count, Converter={StaticResource CountToVisibilityConverter}}"
+                  HorizontalOptions="Center"
+                  VerticalOptions="Center"/>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>
