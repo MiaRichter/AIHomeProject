@@ -1,0 +1,36 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:AIHomeProject.ViewModels"
+             x:Class="AIHomeProject.Pages.CreateComponentPage"
+             Title="Создание компонента"
+             x:DataType="viewmodels:CreateComponentViewModel">
+    
+    <ScrollView>
+        <StackLayout Padding="20" Spacing="15">
+            <Entry Placeholder="ID компонента" 
+                   Text="{Binding CurrentComponent.ComponentId}" />
+            <Entry Placeholder="Название" 
+                   Text="{Binding CurrentComponent.Name}" />
+            <Editor Placeholder="Описание" 
+                   Text="{Binding CurrentComponent.Description}"
+                   HeightRequest="100" />
+            <Entry Placeholder="Тип компонента" 
+                   Text="{Binding CurrentComponent.ComponentType}" />
+            <Entry Placeholder="Местоположение" 
+                   Text="{Binding CurrentComponent.Location}" />
+
+            <Button Text="Создать" 
+                    Command="{Binding CreateCommand}"
+                    IsEnabled="{Binding IsOnline}"
+                    BackgroundColor="{Binding IsOnline, Converter={StaticResource BoolToColorConverter}}">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button"
+                                Binding="{Binding IsOnline}"
+                                Value="False">
+                        <Setter Property="Text" Value="Сервер недоступен"/>
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

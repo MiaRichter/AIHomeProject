@@ -3,6 +3,7 @@ using System.Text;
 using System.Windows.Input;
 using AIHomeProject.Models;
 using AIHomeProject.Services;
+using AIHomeProject.Pages;
 
 namespace AIHomeProject.ViewModels
 {
@@ -43,17 +44,23 @@ namespace AIHomeProject.ViewModels
             IsBusy = false;
         }
 
-        // Замените существующий метод LoadComponents на:
         public async void LoadComponents() => await LoadComponentsAsync();
 
         private async void OnAddComponent()
         {
-            var navigationParameter = new Dictionary<string, object>
+            await Shell.Current.GoToAsync(nameof(CreateComponentPage));
+        }
+
+        private async void OnEditComponent(Component component)
+        {
+            if (component == null) return;
+
+            var parameters = new Dictionary<string, object>
             {
-                { "component", new Component() },
-                { "isNew", true }
+                { "Component", component }
             };
-            await Shell.Current.GoToAsync("ComponentFormPage", navigationParameter);
+
+            await Shell.Current.GoToAsync(nameof(EditComponentPage), parameters);
         }
 
         private async void OnShowDetails(Component component)
@@ -74,17 +81,6 @@ namespace AIHomeProject.ViewModels
                 $"Детали: {component.Name}",
                 details.ToString(),
                 "Закрыть");
-        }
-
-        private async void OnEditComponent(Component component)
-        {
-            if (component == null) return;
-            var navigationParameter = new Dictionary<string, object>
-            {
-                { "component", component },
-                { "isNew", false }
-            };
-            await Shell.Current.GoToAsync("ComponentFormPage", navigationParameter);
         }
 
         private async void OnDeleteComponent(string componentId)

@@ -47,7 +47,7 @@ namespace AIHomeProject.Services
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Ошибка", $"Ошибка: {ex.Message}", "OK");
+                await Shell.Current.DisplayAlert("Ошибка", $"{ex.Message}", "OK");
                 return new List<Component>();
             }
         }

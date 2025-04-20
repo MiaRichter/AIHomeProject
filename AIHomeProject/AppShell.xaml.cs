@@ -7,7 +7,8 @@ namespace AIHomeProject
         public AppShell()
         {
             InitializeComponent();
-            Routing.RegisterRoute("ComponentFormPage", typeof(ComponentFormPage));
+            Routing.RegisterRoute(nameof(CreateComponentPage), typeof(CreateComponentPage));
+            Routing.RegisterRoute(nameof(EditComponentPage), typeof(EditComponentPage));
         }
     }
 }

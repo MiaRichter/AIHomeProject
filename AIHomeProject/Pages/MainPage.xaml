@@ -8,6 +8,7 @@
              x:DataType="viewmodels:MainViewModel">
 
     <ContentPage.Resources>
+        <!-- Стили остаются без изменений -->
         <converters:CountToVisibilityConverter x:Key="CountToVisibilityConverter"/>
         <converters:BoolToColorConverter x:Key="BoolToColorConverter"/>
 
@@ -68,21 +69,36 @@
                     <BindableLayout.ItemTemplate>
                         <DataTemplate x:DataType="model:Component">
                             <Frame Style="{StaticResource ComponentCard}">
-                                <VerticalStackLayout Spacing="10">
+                                <Grid RowDefinitions="Auto,Auto,*,Auto">
+                                    <!-- Новый Grid для точного позиционирования -->
+                                    <!-- Заголовок -->
                                     <Label Text="{Binding Name}" 
-                                           Style="{StaticResource SubHeadline}"/>
+                                           Style="{StaticResource SubHeadline}"
+                                           Grid.Row="0"/>
 
+                                    <!-- Разделитель -->
                                     <BoxView HeightRequest="1" 
-                                             Color="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray700}}"/>
+                                             Color="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray700}}"
+                                             Grid.Row="1"/>
 
-                                    <Label Text="{Binding ComponentType}"
-                                           FontSize="14"/>
+                                    <!-- Центральная область с данными -->
+                                    <StackLayout Grid.Row="2"
+                                                 VerticalOptions="Center"
+                                                 Spacing="8">
+                                        <Label Text="{Binding ComponentType}"
+                                               FontSize="14"
+                                               HorizontalOptions="Center"/>
 
-                                    <Label Text="{Binding Location}"
-                                           FontSize="14"/>
+                                        <Label Text="{Binding Location}"
+                                               FontSize="14"
+                                               HorizontalOptions="Center"/>
+                                    </StackLayout>
 
-                                    <HorizontalStackLayout Spacing="10" 
-                                                         HorizontalOptions="Center">
+                                    <!-- Иконки внизу -->
+                                    <HorizontalStackLayout Grid.Row="3"
+                                                         Spacing="10" 
+                                                         HorizontalOptions="Center"
+                                                         VerticalOptions="Center">
                                         <ImageButton Source="info.png"
                                                     Style="{StaticResource IconButton}"
                                                     Aspect="AspectFit"
@@ -99,7 +115,7 @@
                                                     Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:MainViewModel}}, Path=DeleteComponentCommand}"
                                                     CommandParameter="{Binding ComponentId}"/>
                                     </HorizontalStackLayout>
-                                </VerticalStackLayout>
+                                </Grid>
                             </Frame>
                         </DataTemplate>
                     </BindableLayout.ItemTemplate>

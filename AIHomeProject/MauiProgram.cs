@@ -24,8 +24,10 @@ namespace AIHomeProject
             // Регистрация сервисов
             builder.Services.AddSingleton<ApiService>();
             builder.Services.AddSingleton<MainViewModel>();
-            builder.Services.AddTransient<ComponentFormViewModel>();
-            builder.Services.AddTransient<ComponentFormPage>();
+            builder.Services.AddTransient<CreateComponentPage>();
+            builder.Services.AddTransient<EditComponentPage>();
+            builder.Services.AddTransient<CreateComponentViewModel>();
+            builder.Services.AddTransient<EditComponentViewModel>();
             builder.Services.AddTransient<MainPage>();
             builder.Services.AddSingleton<IConnectivity>(Connectivity.Current);
             return builder.Build();
