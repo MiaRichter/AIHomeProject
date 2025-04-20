@@ -16,6 +16,7 @@ namespace AIHomeProject.ViewModels
         public ICommand ShowDetailsCommand { get; }
         public ICommand EditComponentCommand { get; }
         public ICommand DeleteComponentCommand { get; }
+        public ICommand LoadComponentsCommand { get; }
 
         public MainViewModel(ApiService apiService)
         {
@@ -25,11 +26,12 @@ namespace AIHomeProject.ViewModels
             ShowDetailsCommand = new Command<Component>(OnShowDetails);
             EditComponentCommand = new Command<Component>(OnEditComponent);
             DeleteComponentCommand = new Command<string>(OnDeleteComponent);
+            LoadComponentsCommand = new Command(async () => await LoadComponentsAsync());
 
             LoadComponents();
         }
 
-        public async void LoadComponents()
+        public async Task LoadComponentsAsync()
         {
             IsBusy = true;
             var components = await _apiService.GetComponentsAsync();
@@ -40,6 +42,9 @@ namespace AIHomeProject.ViewModels
             }
             IsBusy = false;
         }
+
+        // Замените существующий метод LoadComponents на:
+        public async void LoadComponents() => await LoadComponentsAsync();
 
         private async void OnAddComponent()
         {

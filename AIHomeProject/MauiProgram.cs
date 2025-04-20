@@ -27,6 +27,7 @@ namespace AIHomeProject
             builder.Services.AddTransient<ComponentFormViewModel>();
             builder.Services.AddTransient<ComponentFormPage>();
             builder.Services.AddTransient<MainPage>();
+            builder.Services.AddSingleton<IConnectivity>(Connectivity.Current);
             return builder.Build();
         }
     }

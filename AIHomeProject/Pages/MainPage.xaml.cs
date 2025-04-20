@@ -6,6 +6,7 @@ namespace AIHomeProject
         public MainPage(MainViewModel viewModel)
         {
             InitializeComponent();
+            OnAppearing();
             BindingContext = viewModel;
         }
         protected override void OnAppearing()

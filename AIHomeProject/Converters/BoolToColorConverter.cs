@@ -7,26 +7,14 @@ namespace AIHomeProject.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (bool)value ? Colors.Green : Colors.Red;
+            return (bool)value ? Color.FromHex("#512BD4") : Color.FromHex("#B0B0B0");
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
-    }
 
-    // BoolToStatusConverter.cs
-    public class BoolToStatusConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return (bool)value ? "Активен" : "Неактивен";
-        }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

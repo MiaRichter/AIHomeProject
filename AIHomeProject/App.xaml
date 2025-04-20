@@ -1,5 +1,6 @@
 ﻿<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:AIHomeProject.Converters"
              x:Class="AIHomeProject.App">
     <Application.Resources>
         <ResourceDictionary>
@@ -9,6 +10,7 @@
             <Color x:Key="Tertiary">#2B0B98</Color>
             <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
             <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+            <converters:BoolToColorConverter x:Key="BoolToColorConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
