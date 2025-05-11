@@ -10,7 +10,7 @@ namespace AIHomeProject.Services
     public class ApiService
     {
         private readonly HttpClient _httpClient;
-        private const string BaseUrl = "http://mia.local:5000/Api/ComponentManipulation/";
+        private const string BaseUrl = "http://mia.local:5000/Api/ComponentManipulation/"; // Измените на http
         private readonly JsonSerializerOptions _jsonOptions = new()
         {
             PropertyNameCaseInsensitive = true,
@@ -18,36 +18,41 @@ namespace AIHomeProject.Services
         };
         public ApiService()
         {
-            _httpClient = new HttpClient
+            var handler = new HttpClientHandler()
             {
-                Timeout = TimeSpan.FromSeconds(15)
+                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
             };
+            _httpClient = new HttpClient(handler)
+            {
+                Timeout = TimeSpan.FromSeconds(30)
+            };
+
         }
 
         public async Task<List<Component>> GetComponentsAsync()
         {
             try
             {
-                var response = await _httpClient.GetAsync($"{BaseUrl}ShowComponents");
+                string url = $"{BaseUrl}ShowComponents";
+                var response = await _httpClient.GetAsync(url);
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    await HandleErrorResponse(response);
+                    //await ShowAlert($"Ошибка сервера: {response.StatusCode}");
                     return new List<Component>();
                 }
 
                 var content = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrEmpty(content))
+                {
+                    return new List<Component>();
+                }
+
                 return JsonSerializer.Deserialize<List<Component>>(content, _jsonOptions) ?? new List<Component>();
-            }
-            catch (TaskCanceledException ex) when (ex.CancellationToken == CancellationToken.None)
-            {
-                // Это исключение возникло из-за таймаута, а не явной отмены
-                await Shell.Current.DisplayAlert("Ошибка", "Таймаут запроса", "OK");
-                return new List<Component>();
             }
             catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Ошибка", $"{ex.Message}", "OK");
+                //await ShowAlert($"Ошибка: {ex.Message}");
                 return new List<Component>();
             }
         }
@@ -74,13 +79,7 @@ namespace AIHomeProject.Services
 
                 var response = await _httpClient.PostAsync($"{BaseUrl}Create", content);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    return true;
-                }
-
-                await HandleErrorResponse(response);
-                return false;
+                return response.IsSuccessStatusCode;
             }
             catch (TaskCanceledException ex) when (ex.CancellationToken.IsCancellationRequested)
             {
@@ -94,7 +93,7 @@ namespace AIHomeProject.Services
             }
             catch (HttpRequestException ex)
             {
-                await ShowAlert($"Ошибка сети: {GetNetworkError(ex)}");
+                //await ShowAlert($"Ошибка сети: {GetNetworkError(ex)}");
                 return false;
             }
             catch (Exception ex)
@@ -112,11 +111,27 @@ namespace AIHomeProject.Services
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.PutAsync($"{BaseUrl}Update", content);
-                return response.IsSuccessStatusCode;
+
+                return true;
+            }
+            catch (TaskCanceledException ex) when (ex.CancellationToken.IsCancellationRequested)
+            {
+                //await ShowAlert("Запрос был отменен");
+                return false;
+            }
+            catch (TaskCanceledException)
+            {
+                //await ShowAlert("Таймаут запроса (15 секунд)");
+                return false;
+            }
+            catch (HttpRequestException ex)
+            {
+                //await ShowAlert($"Ошибка сети: {GetNetworkError(ex)}");
+                return false;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Ошибка при обновлении компонента: {ex.Message}");
+                //await ShowAlert($"Неожиданная ошибка: {ex.Message}");
                 return false;
             }
         }
@@ -126,7 +141,7 @@ namespace AIHomeProject.Services
             try
             {
                 var response = await _httpClient.DeleteAsync($"{BaseUrl}Delete/{componentId}");
-                return response.IsSuccessStatusCode;
+                return true;
             }
             catch (Exception ex)
             {
@@ -135,27 +150,6 @@ namespace AIHomeProject.Services
             }
         }
 
-        private async Task HandleErrorResponse(HttpResponseMessage response)
-        {
-            string errorMessage = response.StatusCode switch
-            {
-                HttpStatusCode.NotFound => "Ресурс не найден (404)",
-                HttpStatusCode.BadRequest => "Неверный запрос (400)",
-                _ => $"Ошибка сервера: {(int)response.StatusCode}"
-            };
-
-            try
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                if (!string.IsNullOrEmpty(errorContent))
-                {
-                    errorMessage += $"\nДетали: {errorContent}";
-                }
-            }
-            catch { }
-
-            await ShowAlert(errorMessage);
-        }
 
         private string GetNetworkError(HttpRequestException ex)
         {

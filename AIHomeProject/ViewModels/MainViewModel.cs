@@ -29,7 +29,7 @@ namespace AIHomeProject.ViewModels
             DeleteComponentCommand = new Command<string>(OnDeleteComponent);
             LoadComponentsCommand = new Command(async () => await LoadComponentsAsync());
 
-            LoadComponents();
+            //LoadComponents();
         }
 
         public async Task LoadComponentsAsync()
@@ -53,7 +53,7 @@ namespace AIHomeProject.ViewModels
 
         private async void OnEditComponent(Component component)
         {
-            if (component == null) return;
+            if (component == null || component.ComponentId == null) return;
 
             var parameters = new Dictionary<string, object>
             {

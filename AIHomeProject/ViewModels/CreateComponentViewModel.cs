@@ -47,9 +47,8 @@ namespace AIHomeProject.ViewModels
             {
                 bool success = await _apiService.CreateComponentAsync(CurrentComponent);
                 string message = success ? "Компонент успешно создан" : "Не удалось создать компонент";
-
-                if (success) await Shell.Current.GoToAsync("..");
                 await Shell.Current.DisplayAlert(success ? "Успех" : "Ошибка", message, "OK");
+                if (success) await Shell.Current.GoToAsync("..");
             }
             finally
             {
